@@ -86,7 +86,8 @@ $ ./S20control.py globaldiscover 192.168.242.255
 ```
 
 Again, use the appropriate broadcast address for your network.
-Subscribe, Power On, Power Off
+
+## Subscribe, Power On, Power Off
 
 These are all more or less the same structure. The response from the Subscribe command on it's own tells you very little of use other than the state of the switch which you can also get from the Discover command.
 
@@ -138,7 +139,8 @@ There is a set of bytes used for some sort of time in many of the returned packe
 After examining these in more detail, I personally think that this set is a 4-byte (32-bit) unsigned integer which at the time of writing works out as just over 116 years worth of seconds which got me thinking - it looks like it could be the number of seconds since 1900 (rather than the usual Unix Epoch of 1970). In my experimenting this seems to hold true so that's how I'm interpreting it.
 
 One thing to note with this way of measurement is that the roll-over will occur in 2036 which is a lot closer than ideal - in fact at this point my S20 has almost exactly 10 years before weird stuff could happen with it.
-Zeroes
+
+## Zeroes
 
 The series of zero bytes after the MAC addresses in the response to a poweron/poweroff command is zero only when there is one S20 on the network. With a second one the first byte turns to a 0x01. Could this be a count of other devices on the network? I only have two so can't be sure.
 
