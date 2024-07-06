@@ -35,6 +35,7 @@ import pprint
 import socket
 import struct
 import time
+import re
 
 
 # get args
@@ -329,34 +330,34 @@ def main():
         sock.settimeout(2)  # seconds - in reality << 1 is needed
 
         # connect to network
-        sock.sendto('HF-A11ASSISTHREAD', (ip, 48899))
+        sock.sendto('HF-A11ASSISTHREAD'.encode(), (ip, 48899))
         data, addr = sock.recvfrom(1024)
-        socketip, socketmac, sockethost = data.split(',')
+        socketip, socketmac, sockethost = data.decode().split(',')
         print(socketip, socketmac, sockethost)
-        sock.sendto('+ok', (ip, 48899))  # ack
-        sock.sendto("AT+WSSSID=%s\r" % wlan, (ip, 48899))
+        sock.sendto('+ok'.encode(), (ip, 48899))  # ack
+        sock.sendto(("AT+WSSSID=%s\r" % wlan).encode(), (ip, 48899))
         data, addr = sock.recvfrom(1024)
 
-        if data.rstrip() != '+ok':
-            print('FATAL - got "%s" in response to set SSID' % data.rstrip(), file=sys.stderr)
+        if data.decode().rstrip() != '+ok':
+            print('FATAL - got "%s" in response to set SSID' % data.decode().rstrip(), file=sys.stderr)
             sys.exit(1)
 
         key = input('Enter WIFI key for "%s": ' % wlan)
-        sock.sendto("AT+WSKEY=WPA2PSK,AES,%s\r" % key, (ip, 48899))
+        sock.sendto(("AT+WSKEY=WPA2PSK,AES,%s\r" % key).encode(), (ip, 48899))
         data, addr = sock.recvfrom(1024)
 
-        if data.rstrip() != '+ok':
-            print('FATAL - got "%s" in response to set KEY' % data.rstrip(), file=sys.stderr)
+        if data.decode().rstrip() != '+ok':
+            print('FATAL - got "%s" in response to set KEY' % data.decode().rstrip(), file=sys.stderr)
             sys.exit(1)
 
-        sock.sendto("AT+WMODE=STA\r", (ip, 48899))
+        sock.sendto("AT+WMODE=STA\r".encode(), (ip, 48899))
         data, addr = sock.recvfrom(1024)
 
-        if data.rstrip() != '+ok':
-            print('FATAL - got "%s" in response to set MODE' % data.rstrip(), file=sys.stderr)
+        if data.decode().rstrip() != '+ok':
+            print('FATAL - got "%s" in response to set MODE' % data.decode().rstrip(), file=sys.stderr)
             sys.exit(1)
 
-        sock.sendto("AT+Z\r", (ip, 48899))  # no return
+        sock.sendto("AT+Z\r".encode(), (ip, 48899))  # no return
         print("connect complete to \"%s\"" % wlan)
 
     elif command == 'listen':  # listen for stuff sent round
